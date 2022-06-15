@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="/static/echarts-4.1.0-release/dist/echarts.min.js"></script>
+  <script src="/static/jquery.js"></script>
+  <script src="/static/layui/layui.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+  <!--layui公共模块-->
+  <div th:include="common :: menu"></div>
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div style="padding: 15px;">
+      <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+      <div id="main" style="width: 900px;height:800px;"></div>
+    </div>
+  </div>
+<script>
+  var myChart = echarts.init(document.getElementById('main'));
+  var dataList = [];
+  option = {
+    title: {
+      text: 'Referer of a Website',
+      subtext: 'Fake Data',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left'
+    },
+
+  };
+
+  //ajax
+  $.ajax({
+    url: "/queryPie",
+    dataType: "json",
+    success: function (data){
+      for (let i in data){
+        dataList[i] = data[i];
+      }
+      myChart.setOption({
+        series: [
+          {
+            name: '中国疫情数据',
+            type: 'pie',
+            radius: '50%',
+            data: dataList,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      })
+    }
+
+  });
+  myChart.setOption(option);
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="/static/echarts-4.1.0-release/dist/echarts.min.js"></script>
+  <script src="/static/jquery.js"></script>
+  <script src="/static/layui/layui.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+  <!--layui公共模块-->
+  <div th:include="common :: menu"></div>
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div style="padding: 15px;">
+      <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+      <div id="main" style="width: 900px;height:800px;"></div>
+    </div>
+  </div>
+<script>
+  var myChart = echarts.init(document.getElementById('main'));
+  var dataList = [];
+  option = {
+    axisLabel: {
+      interval:0,
+    },
+  };
+  //ajax
+  $.ajax({
+    url: "/queryBar",
+    dataType: "json",
+    success: function (data){
+      // data: map <cityList[],dataList[]>
+      myChart.setOption({
+        xAxis: {
+          type: 'category',
+          data: data.cityList,
+          interval:0,
+          showMinLabel: true,//显示最小值
+          showMaxLabel: true,//显示最大值
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: data.dataList,
+            type: 'bar',
+            showBackground: true,
+            backgroundStyle: {
+              color: 'rgba(180, 180, 180, 0.2)'
+            }
+          }
+        ]
+      })
+    }
+
+  });
+  myChart.setOption(option);
+</script>
+</body>
+</html>

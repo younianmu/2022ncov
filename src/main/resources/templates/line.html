@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="/static/echarts-4.1.0-release/dist/echarts.min.js"></script>
+  <script src="/static/jquery.js"></script>
+  <script src="/static/layui/layui.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+</head>
+<body>
+  <!--layui公共模块-->
+  <div th:include="common :: menu"></div>
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div style="padding: 15px;">
+      <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+      <div id="main" style="width: 900px;height:800px;"></div>
+    </div>
+  </div>
+<script>
+  var myChart = echarts.init(document.getElementById('main'));
+  var dataList = [];
+  option = {
+    title: {
+      text: 'Stacked Line'
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['确诊', '隔离', '治愈', '死亡', '疑似']
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+
+  };
+
+  //ajax
+  $.ajax({
+    url: "/queryLine",
+    dataType: "json",
+    success: function (data){
+
+      myChart.setOption({
+        series: [
+          {
+            name: '确诊',
+            type: 'line',
+            stack: 'Total',
+            data: data.confirmList
+          },
+          {
+            name: '隔离',
+            type: 'line',
+            stack: 'Total',
+            data: data.isolationList
+          },
+          {
+            name: '治愈',
+            type: 'line',
+            stack: 'Total',
+            data: data.cureList
+          },
+          {
+            name: '死亡',
+            type: 'line',
+            stack: 'Total',
+            data: data.deadList
+          },
+          {
+            name: '疑似',
+            type: 'line',
+            stack: 'Total',
+            data: data.similarList
+          }
+        ]
+      })
+    }
+
+  });
+  myChart.setOption(option);
+</script>
+</body>
+</html>
